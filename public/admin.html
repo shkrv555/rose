@@ -362,7 +362,7 @@
 <body>
     <header>
         <div class="header-content">
-            <img src="C:\Users\user\Desktop\rozmarin\ela rozmarin\photo\rozma.jpeg" class="logo">
+            <!-- <img src="C:\Users\user\Desktop\rozmarin\ela rozmarin\photo\rozma.jpeg" class="logo"> -->
             <div class="header-text">
                 <h1>Rozmarin</h1>
             </div>
@@ -518,24 +518,38 @@
         </div>
     </div>
 
-    <script>
+    <script type="module" defer>
         // Admin giriş məlumatları
-        let adminCredentials = {
-            username: "admin",
-            password: "rozmarin123"
-        };
+        // let adminCredentials = {
+        //     username: "admin",
+        //     password: "rozmarin123"
+        // };
+        // document.addEventListener('DOMContentLoaded', async function() {
+        //     console.log("loading dom");
+        // });
+        let adminCredentials = await fetch('/storage/adminCredentials').then(res => res.json());
 
         // Yerli yaddaşdan admin məlumatlarını yüklə
-        function loadAdminCredentials() {
-            const savedCredentials = localStorage.getItem('adminCredentials');
+        async function loadAdminCredentials() {
+            // const savedCredentials = localStorage.getItem('adminCredentials');
+            const savedCredentials = await fetch('/storage/adminCredentials').then(res => res.json());
+            
             if (savedCredentials) {
-                adminCredentials = JSON.parse(savedCredentials);
+                console.log("Yüklənmiş admin məlumatları:", savedCredentials);
+                adminCredentials = savedCredentials;
             }
         }
 
         // Yerli yaddaşa admin məlumatlarını saxla
-        function saveAdminCredentials() {
-            localStorage.setItem('adminCredentials', JSON.stringify(adminCredentials));
+        async function saveAdminCredentials() {
+            // localStorage.setItem('adminCredentials', JSON.stringify(adminCredentials));
+            await fetch('/storage/adminCredentials', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(adminCredentials)
+            });
         }
 
         // Menyu məlumatlarını saxlamaq üçün
@@ -549,67 +563,40 @@
         let currentImageData = null;
 
         // Yerli yaddaşdan məlumatları yüklə
-        // function loadMenuData() {
-        //     const savedData = localStorage.getItem('qrMenuData');
-        //     if (savedData) {
-        //         menuData = JSON.parse(savedData);
-        //     }
-        //     renderCategories();
-        //     populateCategorySelect();
-        // }
-
         async function loadMenuData() {
-            try {
-                const res = await fetch('/menu.json');
-                if (res.ok) {
-                    menuData = await res.json();
-                } else {
-                    menuData = {}; // fallback if file missing
-                }
-            } catch (e) {
-                console.error('Load error:', e);
-                menuData = {}; // fallback
+            console.log("Menyu məlumatları yüklənir...");
+            // const savedData = localStorage.getItem('qrMenuData');
+            const savedData = await fetch('/storage/qrMenuData').then(res => res.json());
+            if (savedData) {
+                menuData = (savedData);
             }
-
             renderCategories();
             populateCategorySelect();
         }
 
-
         // Yerli yaddaşa məlumatları saxla
-        // function saveMenuData() {
-        //     localStorage.setItem('qrMenuData', JSON.stringify(menuData));
-        //     renderCategories();
-        //     populateCategorySelect();
-        // }
-
-        function saveMenuData() {
-            fetch('/save-menu', {
+        async function saveMenuData() {
+            // localStorage.setItem('qrMenuData', JSON.stringify(menuData));
+            await fetch('/storage/qrMenuData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(menuData)
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Saved:', data);
-                renderCategories();
-                populateCategorySelect();
-            })
-            .catch(err => console.error('Save error:', err));
+            });
+            renderCategories();
+            populateCategorySelect();
         }
 
-
         // 10 ədəd kateqoriya əlavə et
-        document.getElementById('addDefaultCategories').addEventListener('click', function() {
+        document.getElementById('addDefaultCategories').addEventListener('click', async function() {
             for (let i = 1; i <= 10; i++) {
                 menuData.categories.push({
                     name: `Kateqoriya ${i}`,
                     products: []
                 });
             }
-            saveMenuData();
+            await saveMenuData();
             alert('10 ədəd kateqoriya uğurla əlavə edildi!');
         });
 
@@ -807,7 +794,7 @@
         }
 
         // Kateqoriya əlavə et
-        document.getElementById('addCategory').addEventListener('click', function() {
+        document.getElementById('addCategory').addEventListener('click', async function() {
             const categoryName = document.getElementById('categoryName').value.trim();
             
             if (categoryName === '') {
@@ -821,11 +808,11 @@
             });
             
             document.getElementById('categoryName').value = '';
-            saveMenuData();
+            await saveMenuData();
         });
 
         // Məhsul əlavə et
-        document.getElementById('addProduct').addEventListener('click', function() {
+        document.getElementById('addProduct').addEventListener('click', async function() {
             const categoryIndex = document.getElementById('productCategory').value;
             const productName = document.getElementById('productName').value.trim();
             const productDescription = document.getElementById('productDescription').value.trim();
@@ -857,28 +844,28 @@
             document.getElementById('imagePreview').style.display = 'none';
             currentImageData = null;
             
-            saveMenuData();
+            await saveMenuData();
         });
 
         // Kateqoriya redaktə et
-        function editCategory(index) {
+        async function editCategory(index) {
             const newName = prompt('Yeni kateqoriya adını daxil edin:', menuData.categories[index].name);
             if (newName && newName.trim() !== '') {
                 menuData.categories[index].name = newName.trim();
-                saveMenuData();
+                await saveMenuData();
             }
         }
 
         // Kateqoriya sil
-        function deleteCategory(index) {
+        async function deleteCategory(index) {
             if (confirm('Bu kateqoriyanı və bütün məhsullarını silmək istədiyinizə əminsiniz?')) {
                 menuData.categories.splice(index, 1);
-                saveMenuData();
+                await saveMenuData();
             }
         }
 
         // Məhsul redaktə et
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', async function(e) {
             if (e.target.classList.contains('edit-product')) {
                 const categoryIndex = e.target.getAttribute('data-category');
                 const productIndex = e.target.getAttribute('data-index');
@@ -905,19 +892,19 @@
                     menuData.categories[categoryIndex].products[productIndex].image = newImage;
                 }
                 
-                saveMenuData();
+                await saveMenuData();
             }
         });
 
         // Məhsul sil
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', async function(e) {
             if (e.target.classList.contains('delete-product')) {
                 const categoryIndex = e.target.getAttribute('data-category');
                 const productIndex = e.target.getAttribute('data-index');
                 
                 if (confirm('Bu məhsulu silmək istədiyinizə əminsiniz?')) {
                     menuData.categories[categoryIndex].products.splice(productIndex, 1);
-                    saveMenuData();
+                    await saveMenuData();
                 }
             }
         });
@@ -979,11 +966,24 @@
             });
         });
 
+        // console.log("967")
         // Səhifə yüklənəndə məlumatları yüklə
-        document.addEventListener('DOMContentLoaded', function() {
-            loadAdminCredentials();
-            loadMenuData();
-        });
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     console.log("970")
+        //     console.log("Admin səhifəsi yüklənir...");
+        //     // await loadAdminCredentials();
+        //     // await loadMenuData();
+        // });
+
+        async function init() {
+            console.log("967");
+            await loadAdminCredentials();
+            await loadMenuData();
+            console.log("970");
+            console.log("Admin səhifəsi yüklənir...");
+        }
+
+        init();
     </script>
 </body>
 </html>

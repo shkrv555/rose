@@ -1,0 +1,52 @@
+{
+  "categories": [
+    {
+      "name": "Kateqoriya 1",
+      "products": [
+        {
+          "name": "cola1",
+          "description": "1l",
+          "price": "2.40",
+          "image": null
+        }
+      ]
+    },
+    {
+      "name": "Kateqoriya 2",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 3",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 4",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 5",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 6",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 7",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 8",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 9",
+      "products": []
+    },
+    {
+      "name": "Kateqoriya 10",
+      "products": []
+    }
+  ],
+  "restaurantName": "Rozmarin"
+}

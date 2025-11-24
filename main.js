@@ -1,8 +1,10 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = 3000;
+app.use(express.json());
 
 // Serve static files in /public
 app.use(express.static(path.join(__dirname, "public")));
@@ -17,24 +19,35 @@ app.get("/menu", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "menu.html"));
 });
 
-app.get('/menu.json', (req, res) => {
-    res.sendFile(path.join(__dirname, 'menu.json'));
-});
-
-app.post('/save-menu', (req, res) => {
-    const menuData = req.body;
+app.post('/storage/:key', (req, res) => {
+    const key = req.params.key;
+    const value = req.body; // whole body is value
 
     fs.writeFile(
-        path.join(__dirname, 'menu.json'),
-        JSON.stringify(menuData, null, 2),
+        path.join(__dirname, "fsdb", `${key}.json`),
+        JSON.stringify(value, null, 2),
         err => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Error saving" });
-            }
-            res.json({ message: "Saved successfully" });
+            if (err) return res.status(500).json({ message: "Error saving key" });
+            res.json({ message: `Saved key "${key}" successfully` });
         }
     );
+});
+
+app.get('/storage/:key', (req, res) => {
+    const key = req.params.key;
+    const filePath = path.join(__dirname + "/fsdb", `${key}.json`);
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            if (err.code === 'ENOENT') return res.json(null); // Key not found
+            return res.status(500).json({ message: "Error reading key" });
+        }
+        try {
+            res.json(JSON.parse(data));
+        } catch {
+            res.status(500).json({ message: "Invalid JSON in file" });
+        }
+    });
 });
 
 
