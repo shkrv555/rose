@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozmarin - QR Menyu Admin Paneli</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --dark-blue: #1a365d;
+            --gold: #d4af37;
+            --white: #ffffff;
+            --light-blue: #2d3748;
+            --rosemary-blue: #1e3a5f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--dark-blue);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--rosemary-blue);
+            color: var(--gold);
+            padding: 15px 0;
+            border-bottom: 4px solid var(--gold);
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            height: 70px;
+            width: 70px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+        }
+        
+        .header-text {
+            text-align: center;
+        }
+        
+        .header-text h1 {
+            color: var(--gold);
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        h1, h2, h3 {
+            color: var(--dark-blue);
+        }
+        
+        .admin-panel, .login-panel, .settings-panel {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-panel {
+            border-left: 5px solid var(--gold);
+        }
+        
+        .login-panel {
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        
+        .settings-panel {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--dark-blue);
+            color: var(--white);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--light-blue);
+        }
+        
+        .btn-gold {
+            background-color: var(--gold);
+            color: var(--dark-blue);
+        }
+        
+        .btn-gold:hover {
+            background-color: #c19d2e;
+        }
+        
+        .menu-item {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--gold);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .menu-item-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .menu-item-content {
+            flex-grow: 1;
+        }
+        
+        .menu-item h3 {
+            margin-bottom: 5px;
+        }
+        
+        .price {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category h2 {
+            border-bottom: 2px solid var(--dark-blue);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .actions button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        #qrCode {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: var(--white);
+            border-color: #ddd;
+            border-bottom: 1px solid var(--white);
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--gold);
+            color: var(--dark-blue);
+        }
+        
+        .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .image-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .image-option-btn {
+            flex: 1;
+        }
+        
+        .url-input-container {
+            display: none;
+        }
+        
+        .no-image {
+            width: 120px;
+            height: 120px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-right: 15px;
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .qr-instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .bulk-actions {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+            }
+            
+            .menu-item-image, .no-image {
+                width: 100%;
+                height: 200px;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .image-options {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="C:\Users\user\Desktop\rozmarin\ela rozmarin\photo\rozma.jpeg" class="logo">
+            <div class="header-text">
+                <h1>Rozmarin</h1>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Giriş Paneli -->
+        <div id="login-panel" class="login-panel">
+            <h2>Admin Girişi</h2>
+            <div class="form-group">
+                <label for="username">İstifadəçi adı:</label>
+                <input type="text" id="username" placeholder="İstifadəçi adınızı daxil edin">
+            </div>
+            <div class="form-group">
+                <label for="password">Şifrə:</label>
+                <input type="password" id="password" placeholder="Şifrənizi daxil edin">
+            </div>
+            <button id="login-btn">Daxil Ol</button>
+            <p id="login-error" style="color: red; margin-top: 10px; display: none;">Yanlış istifadəçi adı və ya şifrə!</p>
+        </div>
+        
+        <!-- Admin Paneli (Girişdən sonra görünəcək) -->
+        <div id="admin-content" style="display: none;">
+            <button id="logout-btn" class="logout-btn">Çıxış</button>
+            
+            <div class="tab-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="admin">Menyu İdarəetmə</div>
+                    <div class="tab" data-tab="qr">QR Kod Yarat</div>
+                    <div class="tab" data-tab="settings">Tənzimləmələr</div>
+                </div>
+            </div>
+            
+            <div class="tab-content active" id="admin-tab">
+                <div class="admin-panel">
+                    <h2>Menyu Redaktə Paneli</h2>
+                    
+                    <div class="bulk-actions">
+                        <h3>Toplu Əməliyyatlar</h3>
+                        <button id="addDefaultCategories" class="btn-gold">10 Kateqoriya Əlavə Et</button>
+                        <p style="margin-top: 10px; font-size: 14px; color: #666;">Bu düyməyə basaraq 10 ədəd adsız kateqoriya əlavə edə bilərsiniz. Sonradan adlarını dəyişə bilərsiniz.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categoryName">Kateqoriya Adı:</label>
+                        <input type="text" id="categoryName" placeholder="Məsələn: İçkilər">
+                    </div>
+                    
+                    <button id="addCategory" class="btn-gold">Kateqoriya Əlavə Et</button>
+                    
+                    <div id="categoriesList" class="category-list">
+                        <!-- Kateqoriyalar burada görünəcək -->
+                    </div>
+                    
+                    <hr>
+                    
+                    <h3>Məhsul Əlavə Et</h3>
+                    
+                    <div class="form-group">
+                        <label for="productCategory">Kateqoriya Seçin:</label>
+                        <select id="productCategory">
+                            <!-- Kateqoriyalar burada doldurulacaq -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productName">Məhsul Adı:</label>
+                        <input type="text" id="productName" placeholder="Məsələn: Coca-Cola">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Məhsul Təsviri:</label>
+                        <textarea id="productDescription" placeholder="Məsələn: 330ml, qazlı içki"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productPrice">Qiymət (AZN):</label>
+                        <input type="number" id="productPrice" placeholder="Məsələn: 2.50" step="0.01" min="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Məhsul Şəkli:</label>
+                        <div class="image-upload-container">
+                            <div class="image-options">
+                                <button type="button" id="useUrlBtn" class="image-option-btn">URL İstifadə Et</button>
+                                <button type="button" id="uploadImageBtn" class="image-option-btn">Fayl Yüklə</button>
+                            </div>
+                            
+                            <div class="url-input-container" id="urlInputContainer">
+                                <input type="text" id="productImageUrl" placeholder="Şəkil linkini daxil edin">
+                                <button type="button" id="previewImageBtn" class="btn-gold" style="margin-top: 5px;">Şəkli Önizlə</button>
+                            </div>
+                            
+                            <input type="file" id="productImageFile" accept="image/*" style="display: none;">
+                            
+                            <img id="imagePreview" class="image-preview" alt="Şəkil önizləməsi">
+                        </div>
+                    </div>
+                    
+                    <button id="addProduct">Məhsul Əlavə Et</button>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="qr-tab">
+                <div class="admin-panel">
+                    <h2>QR Kod Yaratma</h2>
+                    <p>Bu QR kodu çap edib masalara qoya bilərsiniz. Müştərilər bu kodu skan edərək menyunu öz cihazlarında görə bilərlər.</p>
+                    
+                    <div id="qrCode">
+                        <!-- QR kod burada görünəcək -->
+                    </div>
+                    
+                    <button id="generateQR" class="btn-gold">QR Kodu Yenilə</button>
+                    
+                    <div class="qr-instructions">
+                        <h3>QR Kod İstifadə Təlimatı:</h3>
+                        <ol>
+                            <li>QR kodu çap edin və masalara yerləşdirin</li>
+                            <li>Müştərilər telefonları ilə QR kodu skan edəcəklər</li>
+                            <li>Müştərilər avtomatik olaraq menyu səhifəsinə yönləndiriləcəklər</li>
+                            <li>Müştərilər menyunu öz cihazlarında görə biləcəklər</li>
+                        </ol>
+                        <p><strong>Menyu Linki:</strong> <span id="menuLink"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="settings-tab">
+                <div class="settings-panel">
+                    <h2>Tənzimləmələr</h2>
+                    
+                    <div class="form-group">
+                        <label for="currentPassword">Cari Şifrə:</label>
+                        <input type="password" id="currentPassword" placeholder="Cari şifrənizi daxil edin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">Yeni Şifrə:</label>
+                        <input type="password" id="newPassword" placeholder="Yeni şifrəni daxil edin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Yeni Şifrə (Təkrar):</label>
+                        <input type="password" id="confirmPassword" placeholder="Yeni şifrəni təkrar daxil edin">
+                    </div>
+                    
+                    <button id="changePasswordBtn" class="btn-gold">Şifrəni Dəyiş</button>
+                    
+                    <div id="passwordMessage" class="message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Admin giriş məlumatları
+        let adminCredentials = {
+            username: "admin",
+            password: "rozmarin123"
+        };
+
+        // Yerli yaddaşdan admin məlumatlarını yüklə
+        function loadAdminCredentials() {
+            const savedCredentials = localStorage.getItem('adminCredentials');
+            if (savedCredentials) {
+                adminCredentials = JSON.parse(savedCredentials);
+            }
+        }
+
+        // Yerli yaddaşa admin məlumatlarını saxla
+        function saveAdminCredentials() {
+            localStorage.setItem('adminCredentials', JSON.stringify(adminCredentials));
+        }
+
+        // Menyu məlumatlarını saxlamaq üçün
+        let menuData = {
+            categories: [],
+            restaurantName: "Rozmarin"
+        };
+
+        // Cari istifadəçi statusu
+        let isLoggedIn = false;
+        let currentImageData = null;
+
+        // Yerli yaddaşdan məlumatları yüklə
+        function loadMenuData() {
+            const savedData = localStorage.getItem('qrMenuData');
+            if (savedData) {
+                menuData = JSON.parse(savedData);
+            }
+            renderCategories();
+            populateCategorySelect();
+        }
+
+        // Yerli yaddaşa məlumatları saxla
+        function saveMenuData() {
+            localStorage.setItem('qrMenuData', JSON.stringify(menuData));
+            renderCategories();
+            populateCategorySelect();
+        }
+
+        // 10 ədəd kateqoriya əlavə et
+        document.getElementById('addDefaultCategories').addEventListener('click', function() {
+            for (let i = 1; i <= 10; i++) {
+                menuData.categories.push({
+                    name: `Kateqoriya ${i}`,
+                    products: []
+                });
+            }
+            saveMenuData();
+            alert('10 ədəd kateqoriya uğurla əlavə edildi!');
+        });
+
+        // Şəkil URL-i ilə işləmək
+        document.getElementById('useUrlBtn').addEventListener('click', function() {
+            document.getElementById('urlInputContainer').style.display = 'block';
+            document.getElementById('productImageFile').style.display = 'none';
+        });
+
+        // Fayl yükləmə ilə işləmək
+        document.getElementById('uploadImageBtn').addEventListener('click', function() {
+            document.getElementById('urlInputContainer').style.display = 'none';
+            document.getElementById('productImageFile').style.display = 'block';
+            document.getElementById('productImageFile').click();
+        });
+
+        // Fayl yükləndikdə
+        document.getElementById('productImageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentImageData = event.target.result;
+                    document.getElementById('imagePreview').src = currentImageData;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // URL-dən şəkil önizləmə
+        document.getElementById('previewImageBtn').addEventListener('click', function() {
+            const imageUrl = document.getElementById('productImageUrl').value.trim();
+            if (imageUrl) {
+                // URL-nin etibarlı olub olmadığını yoxlamaq üçün test
+                const img = new Image();
+                img.onload = function() {
+                    document.getElementById('imagePreview').src = imageUrl;
+                    document.getElementById('imagePreview').style.display = 'block';
+                    currentImageData = imageUrl;
+                };
+                img.onerror = function() {
+                    alert('Şəkil URL-i düzgün deyil və ya şəkil yüklənə bilmir.');
+                };
+                img.src = imageUrl;
+            } else {
+                alert('Zəhmət olmasa şəkil URL-i daxil edin.');
+            }
+        });
+
+        // Giriş funksionallığı
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                isLoggedIn = true;
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+
+        // Çıxış funksionallığı
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            isLoggedIn = false;
+            document.getElementById('admin-content').style.display = 'none';
+            document.getElementById('login-panel').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('login-error').style.display = 'none';
+        });
+
+        // Şifrə dəyişmə funksionallığı
+        document.getElementById('changePasswordBtn').addEventListener('click', function() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('passwordMessage');
+            
+            // Təmizlə
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message';
+            
+            // Validasiya
+            if (currentPassword !== adminCredentials.password) {
+                messageDiv.textContent = 'Cari şifrə düzgün deyil!';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (newPassword.length < 4) {
+                messageDiv.textContent = 'Yeni şifrə ən azı 4 simvoldan ibarət olmalıdır!';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                messageDiv.textContent = 'Yeni şifrələr eyni deyil!';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            // Şifrəni dəyiş
+            adminCredentials.password = newPassword;
+            saveAdminCredentials();
+            
+            messageDiv.textContent = 'Şifrə uğurla dəyişdirildi!';
+            messageDiv.className = 'message success';
+            messageDiv.style.display = 'block';
+            
+            // Formu təmizlə
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        });
+
+        // Kateqoriyaları siyahıda göstər
+        function renderCategories() {
+            const categoriesList = document.getElementById('categoriesList');
+            categoriesList.innerHTML = '';
+            
+            menuData.categories.forEach((category, index) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                categoryDiv.innerHTML = `
+                    <h3>${category.name}</h3>
+                    <div class="actions">
+                        <button class="btn-gold edit-category" data-index="${index}">Redaktə</button>
+                        <button class="delete-category" data-index="${index}">Sil</button>
+                    </div>
+                    <div class="products-list" id="products-${index}">
+                        ${renderProducts(category.products, index)}
+                    </div>
+                `;
+                categoriesList.appendChild(categoryDiv);
+            });
+            
+            // Kateqoriya redaktə və sil düymələrinə hadisə əlavə et
+            document.querySelectorAll('.edit-category').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    editCategory(index);
+                });
+            });
+            
+            document.querySelectorAll('.delete-category').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    deleteCategory(index);
+                });
+            });
+        }
+
+        // Məhsulları siyahıda göstər
+        function renderProducts(products, categoryIndex) {
+            if (!products || products.length === 0) {
+                return '<p>Bu kateqoriyada hələ məhsul yoxdur.</p>';
+            }
+            
+            return products.map((product, productIndex) => `
+                <div class="menu-item">
+                    ${product.image ? 
+                        `<img src="${product.image}" alt="${product.name}" class="menu-item-image" onerror="this.style.display='none'">` : 
+                        '<div class="no-image">Şəkil yoxdur</div>'
+                    }
+                    <div class="menu-item-content">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p class="price">${product.price} AZN</p>
+                        <div class="actions">
+                            <button class="btn-gold edit-product" data-category="${categoryIndex}" data-index="${productIndex}">Redaktə</button>
+                            <button class="delete-product" data-category="${categoryIndex}" data-index="${productIndex}">Sil</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Kateqoriya seçimini doldur
+        function populateCategorySelect() {
+            const select = document.getElementById('productCategory');
+            select.innerHTML = '';
+            
+            menuData.categories.forEach((category, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = category.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Kateqoriya əlavə et
+        document.getElementById('addCategory').addEventListener('click', function() {
+            const categoryName = document.getElementById('categoryName').value.trim();
+            
+            if (categoryName === '') {
+                alert('Kateqoriya adını daxil edin!');
+                return;
+            }
+            
+            menuData.categories.push({
+                name: categoryName,
+                products: []
+            });
+            
+            document.getElementById('categoryName').value = '';
+            saveMenuData();
+        });
+
+        // Məhsul əlavə et
+        document.getElementById('addProduct').addEventListener('click', function() {
+            const categoryIndex = document.getElementById('productCategory').value;
+            const productName = document.getElementById('productName').value.trim();
+            const productDescription = document.getElementById('productDescription').value.trim();
+            const productPrice = parseFloat(document.getElementById('productPrice').value);
+            
+            if (productName === '' || isNaN(productPrice) || productPrice <= 0) {
+                alert('Məhsul adını və düzgün qiyməti daxil edin!');
+                return;
+            }
+            
+            if (menuData.categories.length === 0) {
+                alert('Əvvəlcə kateqoriya əlavə edin!');
+                return;
+            }
+            
+            menuData.categories[categoryIndex].products.push({
+                name: productName,
+                description: productDescription,
+                price: productPrice.toFixed(2),
+                image: currentImageData || null
+            });
+            
+            // Formu təmizlə
+            document.getElementById('productName').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productImageUrl').value = '';
+            document.getElementById('productImageFile').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            currentImageData = null;
+            
+            saveMenuData();
+        });
+
+        // Kateqoriya redaktə et
+        function editCategory(index) {
+            const newName = prompt('Yeni kateqoriya adını daxil edin:', menuData.categories[index].name);
+            if (newName && newName.trim() !== '') {
+                menuData.categories[index].name = newName.trim();
+                saveMenuData();
+            }
+        }
+
+        // Kateqoriya sil
+        function deleteCategory(index) {
+            if (confirm('Bu kateqoriyanı və bütün məhsullarını silmək istədiyinizə əminsiniz?')) {
+                menuData.categories.splice(index, 1);
+                saveMenuData();
+            }
+        }
+
+        // Məhsul redaktə et
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('edit-product')) {
+                const categoryIndex = e.target.getAttribute('data-category');
+                const productIndex = e.target.getAttribute('data-index');
+                const product = menuData.categories[categoryIndex].products[productIndex];
+                
+                const newName = prompt('Yeni məhsul adı:', product.name);
+                const newDescription = prompt('Yeni məhsul təsviri:', product.description);
+                const newPrice = prompt('Yeni qiymət (AZN):', product.price);
+                const newImage = prompt('Yeni şəkil URL-i:', product.image || '');
+                
+                if (newName && newName.trim() !== '') {
+                    menuData.categories[categoryIndex].products[productIndex].name = newName.trim();
+                }
+                
+                if (newDescription !== null) {
+                    menuData.categories[categoryIndex].products[productIndex].description = newDescription;
+                }
+                
+                if (newPrice && !isNaN(parseFloat(newPrice)) && parseFloat(newPrice) > 0) {
+                    menuData.categories[categoryIndex].products[productIndex].price = parseFloat(newPrice).toFixed(2);
+                }
+                
+                if (newImage !== null) {
+                    menuData.categories[categoryIndex].products[productIndex].image = newImage;
+                }
+                
+                saveMenuData();
+            }
+        });
+
+        // Məhsul sil
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-product')) {
+                const categoryIndex = e.target.getAttribute('data-category');
+                const productIndex = e.target.getAttribute('data-index');
+                
+                if (confirm('Bu məhsulu silmək istədiyinizə əminsiniz?')) {
+                    menuData.categories[categoryIndex].products.splice(productIndex, 1);
+                    saveMenuData();
+                }
+            }
+        });
+
+        // QR kod yarat
+        document.getElementById('generateQR').addEventListener('click', function() {
+            const qrCodeDiv = document.getElementById('qrCode');
+            qrCodeDiv.innerHTML = '';
+            
+            // Menyu səhifəsinin URL-ni yarat
+            const currentUrl = window.location.href;
+            const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+            const menuPageUrl = baseUrl + 'menu.html';
+            
+            // Menyu linkini göstər
+            document.getElementById('menuLink').textContent = menuPageUrl;
+            
+            // QRCode.js istifadə edərək QR kod yarat
+            QRCode.toCanvas(menuPageUrl, { 
+                width: 200, 
+                height: 200,
+                colorDark: '#1a365d',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            }, function(err, canvas) {
+                if (err) {
+                    console.error(err);
+                    alert('QR kod yaradılarkən xəta baş verdi: ' + err);
+                    return;
+                }
+                
+                qrCodeDiv.appendChild(canvas);
+                
+                // QR kodun çapı üçün təlimat
+                const printInfo = document.createElement('p');
+                printInfo.innerHTML = 'QR kodu çap etmək üçün sağ klik edib "Şəkli çap et" seçin.';
+                qrCodeDiv.appendChild(printInfo);
+            });
+        });
+
+        // Tab funksionallığı
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Aktiv tabı dəyiş
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Aktiv kontenti dəyiş
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+                
+                // QR kod tabına kliklənəndə QR kodu avtomatik yarat
+                if (tabId === 'qr') {
+                    document.getElementById('generateQR').click();
+                }
+            });
+        });
+
+        // Səhifə yüklənəndə məlumatları yüklə
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminCredentials();
+            loadMenuData();
+        });
+    </script>
+</body>
+</html>

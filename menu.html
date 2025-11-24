@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozmarin Menyu</title>
+    <style>
+        :root {
+            --dark-blue: #1a365d;
+            --gold: #d4af37;
+            --white: #ffffff;
+            --light-blue: #2d3748;
+            --rosemary-blue: #1e3a5f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--dark-blue);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--rosemary-blue);
+            color: var(--gold);
+            padding: 15px 0;
+            border-bottom: 4px solid var(--gold);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 70px;
+            width: 70px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .restaurant-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .restaurant-type {
+            font-size: 16px;
+            color: var(--gold);
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .contact-item:hover {
+            color: var(--gold);
+        }
+        
+        .contact-icon {
+            font-size: 18px;
+        }
+        
+        h1, h2, h3 {
+            color: var(--dark-blue);
+        }
+        
+        .customer-view {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--dark-blue);
+        }
+        
+        .menu-item {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--gold);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .menu-item-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .menu-item-content {
+            flex-grow: 1;
+        }
+        
+        .menu-item h3 {
+            margin-bottom: 5px;
+        }
+        
+        .price {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category h2 {
+            border-bottom: 2px solid var(--dark-blue);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .no-image {
+            width: 120px;
+            height: 120px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-right: 15px;
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid var(--dark-blue);
+            background-color: var(--white);
+            color: var(--dark-blue);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .pagination button.active {
+            background-color: var(--dark-blue);
+            color: var(--white);
+        }
+        
+        .pagination button:hover:not(.active) {
+            background-color: var(--light-blue);
+            color: var(--white);
+        }
+        
+        .page-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .logo-section {
+                justify-content: center;
+            }
+            
+            .contact-info {
+                align-items: center;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+            }
+            
+            .menu-item-image, .no-image {
+                width: 100%;
+                height: 200px;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="C:\Users\user\Desktop\rozmarin\ela rozmarin\photo\rozma.jpeg"  class="logo">
+                <div class="logo-text">
+                    <div class="restaurant-name">ROZMARİN</div>
+                    <div class="restaurant-type">Burgerxana & Restoran</div>
+                </div>
+            </div>
+            <div class="contact-info">
+                <a href="https://maps.app.goo.gl/LYScgYybWbyyLpfdA" target="_blank" class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <span>ROZMARİN BURGERXANA</span>
+                </a>
+                <a href="tel:+994948000388" class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span>+994 94 800 03 88</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="customer-view">
+            <h2>Menyumuz</h2>
+            <div id="customerMenuDisplay">
+                <!-- Menyu burada görünəcək -->
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- Səhifələmə düymələri burada görünəcək -->
+            </div>
+            
+            <div class="page-info" id="pageInfo">
+                <!-- Səhifə məlumatı burada görünəcək -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menyu məlumatlarını saxlamaq üçün
+        let menuData = {
+            categories: []
+        };
+
+        // Səhifələmə parametrləri
+        let currentPage = 1;
+        const categoriesPerPage = 5; // Hər səhifədə 5 kateqoriya
+
+        // Yerli yaddaşdan məlumatları yüklə
+        function loadMenuData() {
+            const savedData = localStorage.getItem('qrMenuData');
+            if (savedData) {
+                menuData = JSON.parse(savedData);
+            }
+            renderMenuDisplay();
+        }
+
+        // Müştəri görünüşündə menyunu göstər
+        function renderMenuDisplay() {
+            const customerMenuDisplay = document.getElementById('customerMenuDisplay');
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            customerMenuDisplay.innerHTML = '';
+            pagination.innerHTML = '';
+            
+            if (menuData.categories.length === 0) {
+                customerMenuDisplay.innerHTML = '<p>Hələ heç bir məhsul əlavə edilməyib.</p>';
+                return;
+            }
+            
+            // Səhifələməni hesabla
+            const totalPages = Math.ceil(menuData.categories.length / categoriesPerPage);
+            
+            // Cari səhifədəki kateqoriyaları göstər
+            const startIndex = (currentPage - 1) * categoriesPerPage;
+            const endIndex = Math.min(startIndex + categoriesPerPage, menuData.categories.length);
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                const category = menuData.categories[i];
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                categoryDiv.innerHTML = `
+                    <h2>${category.name}</h2>
+                    ${renderCustomerProducts(category.products)}
+                `;
+                customerMenuDisplay.appendChild(categoryDiv);
+            }
+            
+            // Səhifələmə düymələrini yarat
+            if (totalPages > 1) {
+                // Əvvəlki səhifə düyməsi
+                if (currentPage > 1) {
+                    const prevButton = document.createElement('button');
+                    prevButton.textContent = '← Əvvəlki';
+                    prevButton.addEventListener('click', function() {
+                        currentPage--;
+                        renderMenuDisplay();
+                    });
+                    pagination.appendChild(prevButton);
+                }
+                
+                // Səhifə nömrələri
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement('button');
+                    pageButton.textContent = i;
+                    if (i === currentPage) {
+                        pageButton.classList.add('active');
+                    }
+                    pageButton.addEventListener('click', function() {
+                        currentPage = i;
+                        renderMenuDisplay();
+                    });
+                    pagination.appendChild(pageButton);
+                }
+                
+                // Növbəti səhifə düyməsi
+                if (currentPage < totalPages) {
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = 'Növbəti →';
+                    nextButton.addEventListener('click', function() {
+                        currentPage++;
+                        renderMenuDisplay();
+                    });
+                    pagination.appendChild(nextButton);
+                }
+            }
+            
+            // Səhifə məlumatını göstər
+            pageInfo.textContent = `Səhifə ${currentPage} / ${totalPages} (Cəmi ${menuData.categories.length} kateqoriya)`;
+        }
+
+        // Müştəri görünüşü üçün məhsulları göstər
+        function renderCustomerProducts(products) {
+            if (!products || products.length === 0) {
+                return '<p>Bu kateqoriyada hələ məhsul yoxdur.</p>';
+            }
+            
+            return products.map(product => `
+                <div class="menu-item">
+                    ${product.image ? 
+                        `<img src="${product.image}" alt="${product.name}" class="menu-item-image" onerror="this.style.display='none'">` : 
+                        '<div class="no-image">Şəkil yoxdur</div>'
+                    }
+                    <div class="menu-item-content">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p class="price">${product.price} AZN</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Səhifə yüklənəndə məlumatları yüklə
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMenuData();
+        });
+    </script>
+<!-- Mevcut HTML'in sonuna, </body> kapanışından önce ekle -->
+<script>
+// API base URL
+const API_BASE = 'http://localhost:5000/api';
+
+// Projeleri yükle
+async function loadProjects() {
+    try {
+        const response = await fetch(`${API_BASE}/projects`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayProjects(data.projects);
+        }
+    } catch (error) {
+        console.log('Projeler yüklenemedi:', error);
+    }
+}
+
+// Projeleri göster
+function displayProjects(projects) {
+    const projectsContainer = document.getElementById('projects-container');
+    if (!projectsContainer) return;
+    
+    projectsContainer.innerHTML = projects.map(project => `
+        <div class="project-card">
+            <h3>${project.title}</h3>
+            <p>${project.description}</p>
+            <div class="technologies">
+                <strong>Teknolojiler:</strong> ${project.technologies}
+            </div>
+            <div class="project-links">
+                <a href="${project.project_url}" target="_blank">🌐 Live Demo</a>
+                <a href="${project.github_url}" target="_blank">📁 GitHub</a>
+            </div>
+        </div>
+    `).join('');
+}
+
+// İletişim formu
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    contactForm.reset();
+                } else {
+                    alert('Hata: ' + result.error);
+                }
+            } catch (error) {
+                alert('Bağlantı hatası: ' + error.message);
+            }
+        });
+    }
+    
+    // Ziyaretçi sayısını takip et
+    fetch(`${API_BASE}/visitors`, { method: 'POST' });
+    
+    // Projeleri yükle
+    loadProjects();
+});
+</script>
+</body>
+</html>
