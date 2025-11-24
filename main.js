@@ -15,7 +15,7 @@ app.get("/admin", (req, res) => {
 });
 
 // Route: /menu -> public/menu.html
-app.get("/menu", (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "menu.html"));
 });
 
