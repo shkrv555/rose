@@ -549,21 +549,57 @@
         let currentImageData = null;
 
         // Yerli yaddaşdan məlumatları yüklə
-        function loadMenuData() {
-            const savedData = localStorage.getItem('qrMenuData');
-            if (savedData) {
-                menuData = JSON.parse(savedData);
+        // function loadMenuData() {
+        //     const savedData = localStorage.getItem('qrMenuData');
+        //     if (savedData) {
+        //         menuData = JSON.parse(savedData);
+        //     }
+        //     renderCategories();
+        //     populateCategorySelect();
+        // }
+
+        async function loadMenuData() {
+            try {
+                const res = await fetch('/menu.json');
+                if (res.ok) {
+                    menuData = await res.json();
+                } else {
+                    menuData = {}; // fallback if file missing
+                }
+            } catch (e) {
+                console.error('Load error:', e);
+                menuData = {}; // fallback
             }
+
             renderCategories();
             populateCategorySelect();
         }
 
+
         // Yerli yaddaşa məlumatları saxla
+        // function saveMenuData() {
+        //     localStorage.setItem('qrMenuData', JSON.stringify(menuData));
+        //     renderCategories();
+        //     populateCategorySelect();
+        // }
+
         function saveMenuData() {
-            localStorage.setItem('qrMenuData', JSON.stringify(menuData));
-            renderCategories();
-            populateCategorySelect();
+            fetch('/save-menu', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(menuData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Saved:', data);
+                renderCategories();
+                populateCategorySelect();
+            })
+            .catch(err => console.error('Save error:', err));
         }
+
 
         // 10 ədəd kateqoriya əlavə et
         document.getElementById('addDefaultCategories').addEventListener('click', function() {

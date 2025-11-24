@@ -1,37 +1,43 @@
-console.log("Sever Started")
-// start nodejs serves index.html in current dir nothing else
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const port = 3000;
-const server = http.createServer((req, res) => {
-    console.log(`Request for ${req.url} received.`);
-    let filePath = '.' + req.url;
-    if (filePath == './') {
-        filePath = './index.html';
-    }
-    const extname = String(path.extname(filePath)).toLowerCase();
-    const mimeTypes = {
-        '.html': 'text/html',
-        '.js': 'text/javascript',
-        '.css': 'text/css',
-        '.json': 'application/json',
-        '.png': 'image/png',
-        '.jpg': 'image/jpg',
-        '.gif': 'image/gif',
-        '.wav': 'audio/wav',
-        '.mp4': 'video/mp4',
-        '.woff': 'application/font-woff',
-        '.ttf': 'application/font-ttf',
-        '.eot': 'application/vnd.ms-fontobject',
-        '.otf': 'application/font-otf',
-        '.svg': 'application/image/svg+xml'
-    };
-    const contentType = mimeTypes[extname] || 'application/octet-stream';
-    fs.readFile(filePath, (error, content) => {
-        if (error) {
-            if (error.code == 'ENOENT') {
-                fs.readFile('./404.html', (error, content) => {     
-                    res.writeHead(404, { 'Content-Type': 'text/html' });
-                    res.end(content, 'utf-8');
-                });
+const express = require("express");
+const path = require("path");
+
+const app = express();
+const PORT = 3000;
+
+// Serve static files in /public
+app.use(express.static(path.join(__dirname, "public")));
+
+// Route: /admin -> public/admin.html
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
+
+// Route: /menu -> public/menu.html
+app.get("/menu", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "menu.html"));
+});
+
+app.get('/menu.json', (req, res) => {
+    res.sendFile(path.join(__dirname, 'menu.json'));
+});
+
+app.post('/save-menu', (req, res) => {
+    const menuData = req.body;
+
+    fs.writeFile(
+        path.join(__dirname, 'menu.json'),
+        JSON.stringify(menuData, null, 2),
+        err => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Error saving" });
+            }
+            res.json({ message: "Saved successfully" });
+        }
+    );
+});
+
+
+app.listen(PORT, () => {
+  console.log(`Server running: http://localhost:${PORT}`);
+});
