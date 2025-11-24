@@ -1,2 +1,5 @@
 install nodejs
 install npm
+
+ sukurovbilal6@gmail.com
+   pass: Glbnz181098!
