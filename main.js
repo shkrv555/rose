@@ -1,13 +1,46 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const multer = require("multer");
 
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 
+const imageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, "fsdb", "images"));
+    },
+    filename: function (req, file, cb) {
+        const ext = path.extname(file.originalname);
+        const fileName = `${Date.now()}${ext}`;
+        cb(null, fileName);
+    }
+});
+
+const upload = multer({ storage: imageStorage });
+
+if (!fs.existsSync(path.join(__dirname, "fsdb", "images"))) {
+    fs.mkdirSync(path.join(__dirname, "fsdb", "images"), { recursive: true });
+}
+
 // Serve static files in /public
 app.use(express.static(path.join(__dirname, "public")));
+
+app.post("/upload-image", upload.single("image"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No image uploaded" });
+    }
+
+    const imageUrl = `/images/${req.file.filename}`;
+
+    res.json({
+        message: "Image uploaded",
+        url: imageUrl
+    });
+});
+
+app.use("/images", express.static(path.join(__dirname, "fsdb", "images")));
 
 // Route: /admin -> public/admin.html
 app.get("/admin", (req, res) => {

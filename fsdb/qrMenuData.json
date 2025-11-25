@@ -8,6 +8,12 @@
           "description": "1l",
           "price": "2.40",
           "image": null
+        },
+        {
+          "name": "fanta",
+          "description": "1",
+          "price": "2.10",
+          "image": "/images/1764073549391.jpg"
         }
       ]
     },
